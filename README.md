@@ -109,4 +109,4 @@ def product_list(request):
 ## Author
 
 Django/Python developer — available for freelance projects.
-Portfolio: [your Freelancer profile link]
+Portfolio: https://www.freelancer.com/u/atonf0abdulAzz
