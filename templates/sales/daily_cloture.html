@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}Clôture de Caisse - Boulangerie ERP{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-dark text-white text-center py-3">
+                <h4 class="mb-0">🔑 Clôture Journalière de Caisse</h4>
+                <small class="opacity-75">Date du jour : {{ today|date:"d F Y" }}</small>
+            </div>
+            <div class="card-body p-4">
+                <p class="text-muted text-center mb-4">Utilisez ces montants pour vérifier votre fond de caisse et votre terminal de carte bancaire ce soir.</p>
+
+                <div class="list-group mb-4">
+                    <div class="list-group-item d-flex justify-content-between align-items-center py-3">
+                        <div>
+                            <h6 class="mb-0">💵 Total Espèces</h6>
+                            <small class="text-muted">À compter dans le tiroir physique</small>
+                        </div>
+                        <span class="badge bg-secondary fs-6 p-2">{{ cash_total|floatformat:2 }} €</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center py-3">
+                        <div>
+                            <h6 class="mb-0">💳 Total Cartes Bancaires</h6>
+                            <small class="text-muted">Doit correspondre au ticket du TPE</small>
+                        </div>
+                        <span class="badge bg-secondary fs-6 p-2">{{ card_total|floatformat:2 }} €</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center py-3">
+                        <div>
+                            <h6 class="mb-0">📱 Paiements Mobiles</h6>
+                            <small class="text-muted">Applications et sans contact spécifiques</small>
+                        </div>
+                        <span class="badge bg-secondary fs-6 p-2">{{ mobile_total|floatformat:2 }} €</span>
+                    </div>
+                </div>
+
+                <div class="bg-light p-3 rounded text-center border mb-4">
+                    <h5 class="text-muted text-uppercase small mb-1">Total Général Encaissé</h5>
+                    <h1 class="text-primary fw-bold mb-0">{{ grand_total|floatformat:2 }} €</h1>
+                    <small class="text-muted">Sur un total de {{ orders_count }} clients aujourd'hui</small>
+                </div>
+
+                <div class="d-flex gap-2 flex-wrap">
+                    <a href="{% url 'cashier_interface' %}" class="btn btn-outline-secondary w-100 mb-2">Retour Caisse</a>
+                    <a href="{% url 'cloture_historique' %}" class="btn btn-outline-primary w-100 mb-2">
+                        <i class="bi bi-clock-history"></i> Voir l'historique
+                    </a>
+                    <button onclick="window.print();" class="btn btn-dark w-100"><i class="bi bi-printer"></i> Imprimer le Bilan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

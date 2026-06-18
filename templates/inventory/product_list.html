@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block title %}Gestion des Stocks - Boulangerie ERP{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <h2><i class="bi bi-box-seam me-2"></i>Gestion des Stocks & Produits</h2>
+    <a href="{% url 'product_create' %}" class="btn btn-primary">
+        <i class="bi bi-plus-circle me-2"></i>Ajouter un produit
+    </a>
+    <a href="{% url 'category_list' %}" class="btn btn-outline-secondary me-2">
+        <i class="bi bi-tags me-1"></i>Gérer les catégories
+    </a>
+</div>
+
+{% if low_stock_count > 0 %}
+<div class="alert alert-danger d-flex align-items-center shadow-sm" role="alert">
+    <i class="bi bi-exclamation-triangle-fill fs-4 me-3"></i>
+    <div>
+        <strong>Attention :</strong> Il y a <strong>{{ low_stock_count }}</strong> produit(s) en rupture ou sous le seuil d'alerte !
+    </div>
+</div>
+{% endif %}
+
+<div class="card shadow border-0">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Nom</th>
+                        <th>Catégorie</th>
+                        <th>Prix d'Achat</th>
+                        <th>Prix de Vente</th>
+                        <th>Marge</th>
+                        <th>Stock Actuel</th>
+                        <th>Statut</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in products %}
+                    <tr class="{% if product.stock_quantity <= product.low_stock_threshold %}table-danger{% endif %}">
+                        <td class="fw-bold">{{ product.name }}</td>
+                        <td><span class="badge bg-secondary">{{ product.category.name }}</span></td>
+                        <td>{{ product.purchase_price }} €</td>
+                        <td>{{ product.selling_price }} €</td>
+                        <td class="text-success fw-bold">
+                            {% if product.margin %} +{{ product.margin }} € {% else %} +0.00 € {% endif %}
+                        </td>
+                        <td>
+                            <span class="fw-bold">{{ product.stock_quantity }}</span>
+                            <small class="text-muted">(Seuil : {{ product.low_stock_threshold }})</small>
+                        </td>
+                        <td>
+                            {% if product.is_active %}
+                                <span class="badge bg-success">Actif</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark">Masqué</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end">
+                            <a href="{% url 'product_update' product.id %}" class="btn btn-sm btn-outline-primary me-2">
+                                <i class="bi bi-pencil"></i> Modifier
+                            </a>
+                            <a href="{% url 'soft_delete_product' product.id %}" 
+                                class="btn btn-sm {% if product.is_active %}btn-outline-warning{% else %}btn-outline-success{% endif %}">
+                                {% if product.is_active %}
+                                    <i class="bi bi-eye-slash"></i> Désactiver
+                                {% else %}
+                                    <i class="bi bi-eye"></i> Réactiver
+                                {% endif %}
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="text-center py-4 text-muted">Aucun produit dans le catalogue.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

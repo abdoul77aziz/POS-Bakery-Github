@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Ticket #{{ order.id }}</title>
+    <style>
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            width: 75mm;
+            margin: 0 auto;
+            padding: 2mm; /* On réduit un peu pour gagner de l'espace */
+            font-size: 13px;
+            line-height: 1.2;
+            background-color: #fff;
+        }
+        
+        /* Force le conteneur d'impression à s'adapter à la longueur réelle du texte */
+        @media print {
+            .no-print { display: none !important; }
+            html, body {
+                width: 75mm;
+                height: auto; /* Permet au rouleau de se dérouler sans fin */
+                overflow: visible !important; /* Supprime l'effet de coupure */
+                margin: 0;
+                padding: 0;
+            }
+            @page {
+                size: auto;   /* Laisse l'imprimante gérer la longueur selon le contenu */
+                margin: 0mm;  /* Supprime les marges par défaut du navigateur */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="no-print" style="text-align: center; margin-bottom: 5mm;">
+        <button onclick="window.print();" style="padding: 5px 10px; background: #198754; color: white; border: none; cursor: pointer; border-radius: 3px;">
+            🖨️ Imprimer
+        </button>
+        <button onclick="window.close();" style="padding: 5px 10px; background: #6c757d; color: white; border: none; cursor: pointer; border-radius: 3px; margin-left: 5px;">
+            ❌ Fermer
+        </button>
+    </div>
+    <div class="text-center">
+        <h3 style="margin: 0 0 1mm 0;">LA BONNE FOURNÉE</h3>
+        <p style="margin: 0;">123 Rue de la Boulangerie</p>
+        <p style="margin: 0;">Tél: 01 23 45 67 89</p>
+    </div>
+
+    <div class="line"></div>
+
+    <div>
+        <p style="margin: 2mm 0;"><strong>Ticket :</strong> #{{ order.id }}</p>
+        <p style="margin: 2mm 0;"><strong>Date   :</strong> {{ order.created_at|date:"d/m/Y H:i" }}</p>
+        <p style="margin: 2mm 0;"><strong>Caissier:</strong> {{ order.cashier.username }}</p>
+    </div>
+
+    <div class="line"></div>
+
+    <table style="table-layout: fixed; width: 100%;">
+        <thead>
+            <tr>
+                <th align="left" style="width: 45%;">Désignation</th>
+                <th align="center" style="width: 15%;">Qté</th>
+                <th align="right" style="width: 20%;">P.U.</th>
+                <th align="right" style="width: 20%;">Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for line in order.lines.all %}
+            <tr style="vertical-align: top;">
+                <td style="word-wrap: break-word; overflow: hidden; text-overflow: ellipsis; padding-right: 2px;">
+                    {{ line.product.name }}
+                </td>
+                <td align="center">{{ line.quantity }}</td>
+                <td align="right">{{ line.unit_price }}€</td>
+                <td align="right">{{ line.total_line_price }}€</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="line"></div>
+
+    <table style="font-size: 15px;" class="bold">
+        <tr>
+            <td>TOTAL À PAYER</td>
+            <td align="right">{{ order.total_amount }} €</td>
+        </tr>
+    </table>
+
+    <div style="margin-top: 3mm;">
+        <p style="margin: 0;"><strong>Paiement :</strong> {{ order.get_payment_mode_display }}</p>
+    </div>
+
+    <div class="line"></div>
+
+    <div class="text-center" style="margin-top: 5mm;">
+        <p class="bold" style="margin: 0;">Merci de votre visite !</p>
+        <p style="margin: 0;">À bientôt.</p>
+    </div>
+
+    <script>
+        // Nous avons retiré window.print() automatique au chargement
+        // pour que le ticket reste affiché à l'écran comme un vrai aperçu.
+        
+        // Optionnel : Si vous voulez quand même lancer l'impression mais SANS fermer la fenêtre après :
+        /*
+        window.onload = function() {
+            window.print();
+        }
+            */
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block title %}Statistiques Commerciales - Boulangerie ERP{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 bg-white p-3 rounded shadow-sm">
+    <div>
+        <h2>📊 Tableau de Bord Financier</h2>
+        <p class="text-muted mb-0">Analyse des performances de la boulangerie</p>
+    </div>
+    <div>
+        <a href="{% url 'product_list' %}" class="btn btn-outline-primary"><i class="bi bi-box-seam"></i> Retour Gestion Stocks</a>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card bg-primary text-white shadow-sm">
+            <div class="card-body">
+                <h6 class="card-title text-uppercase opacity-75">Chiffre d'Affaires global</h6>
+                <h2 class="display-6 fw-bold">{{ total_revenue|floatformat:2 }} €</h2>
+                <p class="mb-0 small"><i class="bi bi-receipt"></i> {{ total_sales_count }} tickets enregistrés</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-success text-white shadow-sm">
+            <div class="card-body">
+                <h6 class="card-title text-uppercase opacity-75">Marge brute accumulée</h6>
+                <h2 class="display-6 fw-bold">{{ total_margin|floatformat:2 }} €</h2>
+                <p class="mb-0 small"><i class="bi bi-piggy-bank"></i> Profit réel après coût des ingrédients</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-warning text-dark shadow-sm">
+            <div class="card-body">
+                <h6 class="card-title text-uppercase opacity-75">Panier Moyen</h6>
+                <h2 class="display-6 fw-bold">{{ average_basket|floatformat:2 }} €</h2>
+                <p class="mb-0 small"><i class="bi bi-graph-up"></i> Dépense moyenne par client</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card shadow-sm">
+            <div class="card-header bg-dark text-white py-3">
+                <h5 class="mb-0"><i class="bi bi-trophy text-warning"></i> Top 5 des produits les plus vendus</h5>
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Rang</th>
+                            <th>Nom du produit</th>
+                            <th>Catégorie</th>
+                            <th class="text-center">Quantité totale vendue</th>
+                            <th class="text-end">CA généré</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in top_products %}
+                        <tr>
+                            <td><strong>#{{ forloop.counter }}</strong></td>
+                            <td class="fw-bold text-secondary">{{ item.product__name }}</td>
+                            <td><span class="badge bg-light text-dark border">{{ item.product__category__name }}</span></td>
+                            <td class="text-center fw-bold text-primary">{{ item.total_qty }} u.</td>
+                            <td class="text-end fw-bold text-success">{{ item.total_rev|floatformat:2 }} €</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center p-4 text-muted">Aucune vente enregistrée pour le moment.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
